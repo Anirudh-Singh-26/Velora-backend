@@ -49,10 +49,17 @@ const allowedOrigins = [process.env.FRONTEND_URL, process.env.DASHBOARD_URL];
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -139,7 +146,7 @@ app.post("/login", async (req, res)=>{
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "None",
         maxAge: 3600000,
       });
 
