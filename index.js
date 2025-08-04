@@ -29,21 +29,21 @@ mongoose.connect(url).then(() => {
     updateInterval = setInterval(updateStockData, 8000);
   }
 });
-
 // Graceful shutdown
-const shutdown = () => {
-  console.log("Shutting down gracefully...");
-  if (updateInterval) clearInterval(updateInterval);
-
-  mongoose.connection.close(false, () => {
-    console.log("MongoDB connection closed.");
+const shutdown = async () => {
+  try {
+    console.log("Shutting down gracefully...");
+    await mongoose.connection.close(); // ✅ No callback used
+    console.log("MongoDB connection closed");
     process.exit(0);
-  });
+  } catch (error) {
+    console.error("Error during shutdown:", error);
+    process.exit(1);
+  }
 };
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
-
 
 const allowedOrigins = [process.env.FRONTEND_URL, process.env.DASHBOARD_URL];
 
