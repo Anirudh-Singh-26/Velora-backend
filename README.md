@@ -10,6 +10,13 @@ This repository contains the backend RESTful API server powering the Velora plat
 
 ---
 
+## 🔗 Related Repositories
+
+- **Velora Frontend** - [https://github.com/Anirudh-Singh-26/Velora-frontend](https://github.com/Anirudh-Singh-26/Velora-frontend)  
+- **Velora Dashboard** - [https://github.com/Anirudh-Singh-26/Velora-dashboard](https://github.com/Anirudh-Singh-26/Velora-dashboard)  
+
+---
+
 ## 📦 Tech Stack
 
 - Node.js & Express.js  
@@ -75,13 +82,6 @@ npm run dev
 - Provides secure API endpoints consumed by Velora frontend and dashboard  
 - Handles user authentication, session management, and data persistence  
 - Integrates with MongoDB database for reliable storage  
-
----
-
-## 🔗 Related Repositories
-
-- **Velora Frontend** - [https://github.com/Anirudh-Singh-26/Velora-frontend](https://github.com/Anirudh-Singh-26/Velora-frontend)  
-- **Velora Dashboard** - [https://github.com/Anirudh-Singh-26/Velora-dashboard](https://github.com/Anirudh-Singh-26/Velora-dashboard)  
 
 ---
 
