@@ -47,18 +47,19 @@ process.on("SIGTERM", shutdown);
 
 const allowedOrigins = [process.env.FRONTEND_URL, process.env.DASHBOARD_URL];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -145,10 +146,11 @@ app.post("/login", async (req, res)=>{
       );
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        secure: true,
+        sameSite: "none",
         maxAge: 3600000,
       });
+
 
       res.status(200).json({ msg: "LogIn Successful"});
     } catch (err) {
