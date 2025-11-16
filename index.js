@@ -187,38 +187,84 @@ const apiKey= process.env.STOCK_API_KEY;
 let formatted = [];
 
 async function fetchAndFormatStockData() {
-  try {
-    const symbols = "AAPL,MSFT,GOOGL,AMZN,TSLA,META,NVDA,NFLX,AMD,INTC";
-    const key = process.env.STOCK_API_KEY;
-
-    const url = `https://api.twelvedata.com/price?symbol=${symbols}&apikey=${key}`;
-
-    const resp = await fetch(url);
-    const data = await resp.json();
-
-    // Twelve Data may return either an array OR an object (keyed by symbol)
-    const list = Array.isArray(data)
-      ? data
-      : Object.keys(data).map((k) => ({ symbol: k, price: data[k].price }));
-
-    formatted = list.map((s) => ({
-      name: s.symbol,
-      price: Number(s.price),
-      percent: "0%", // Twelve Data price endpoint doesn't give % change
+  // const response = await fetch(
+  //   `https://financialmodelingprep.com/api/v3/stock_market/actives?apikey=${apiKey}`
+  // );
+  // const data = await response.json();
+  const data = [
+    {
+      name: "AAPL",
+      price: 187.23,
+      percent: "-0.54",
+      isDown: true,
+    },
+    {
+      name: "MSFT",
+      price: 412.89,
+      percent: "+0.82",
       isDown: false,
-    }));
+    },
+    {
+      name: "GOOGL",
+      price: 152.44,
+      percent: "+0.37",
+      isDown: false,
+    },
+    {
+      name: "AMZN",
+      price: 172.91,
+      percent: "-0.12",
+      isDown: true,
+    },
+    {
+      name: "TSLA",
+      price: 238.56,
+      percent: "+1.42",
+      isDown: false,
+    },
+    {
+      name: "META",
+      price: 485.33,
+      percent: "+0.19",
+      isDown: false,
+    },
+    {
+      name: "NVDA",
+      price: 981.77,
+      percent: "-0.23",
+      isDown: true,
+    },
+    {
+      name: "NFLX",
+      price: 598.14,
+      percent: "+0.91",
+      isDown: false,
+    },
+    {
+      name: "AMD",
+      price: 162.45,
+      percent: "-0.33",
+      isDown: true,
+    },
+    {
+      name: "INTC",
+      price: 43.22,
+      percent: "+0.41",
+      isDown: false,
+    },
+  ];
 
-    console.log("Fetched TwelveData formatted:", formatted);
-  } catch (e) {
-    console.error("TwelveData fetch error:", e);
-    formatted = [];
-  }
+
+  formatted = data.slice(0, 10).map((stock) => {
+    const isDown = parseFloat(stock.changesPercentage) < 0;
+    return {
+      name: stock.symbol,
+      price: parseFloat(stock.price),
+      percent: stock.changesPercentage,
+      isDown,
+    };
+  });
 }
-
-
-
-
-
 
 // Call this once at app startup
 fetchAndFormatStockData();
