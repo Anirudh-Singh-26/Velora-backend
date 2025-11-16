@@ -187,21 +187,38 @@ const apiKey= process.env.STOCK_API_KEY;
 let formatted = [];
 
 async function fetchAndFormatStockData() {
-  const response = await fetch(
-    `https://financialmodelingprep.com/api/v3/stock_market/actives?apikey=${apiKey}`
-  );
-  const data = await response.json();
+  try {
+    const symbols = "AAPL,MSFT,GOOGL,AMZN,TSLA,META,NVDA,NFLX,AMD,INTC";
+    const key = process.env.STOCK_API_KEY;
 
-  formatted = data.slice(0, 10).map((stock) => {
-    const isDown = parseFloat(stock.changesPercentage) < 0;
-    return {
-      name: stock.symbol,
-      price: parseFloat(stock.price),
-      percent: stock.changesPercentage,
-      isDown,
-    };
-  });
+    const url = `https://api.twelvedata.com/price?symbol=${symbols}&apikey=${key}`;
+
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    // Twelve Data may return either an array OR an object (keyed by symbol)
+    const list = Array.isArray(data)
+      ? data
+      : Object.keys(data).map((k) => ({ symbol: k, price: data[k].price }));
+
+    formatted = list.map((s) => ({
+      name: s.symbol,
+      price: Number(s.price),
+      percent: "0%", // Twelve Data price endpoint doesn't give % change
+      isDown: false,
+    }));
+
+    console.log("Fetched TwelveData formatted:", formatted);
+  } catch (e) {
+    console.error("TwelveData fetch error:", e);
+    formatted = [];
+  }
 }
+
+
+
+
+
 
 // Call this once at app startup
 fetchAndFormatStockData();
